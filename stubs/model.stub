@@ -3,8 +3,9 @@
 namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Model;
+use App\Supports\Concerns\Unguarded;
 
 class {{ class }} extends Model
 {
-    public $guarded = [];
+    use Unguarded;
 }
