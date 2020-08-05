@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\CurrentUserController;
+use App\Http\Controllers\API\MeController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\SanctumTokenController;
@@ -52,7 +52,7 @@ Route::post('sanctum/token', [SanctumTokenController::class, 'store']);
 
 Route::middleware('auth:sanctum')
     ->group(function () {
-        Route::get('/me', CurrentUserController::class);
+        Route::get('/me', MeController::class);
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
         Route::apiResource('permissions', PermissionController::class);

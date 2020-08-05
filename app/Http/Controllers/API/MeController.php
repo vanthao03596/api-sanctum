@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
-class CurrentUserController
+class MeController
 {
     public function __invoke(Request $request)
     {
