@@ -21,6 +21,7 @@
         "watson/nameable": "^1.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.8",
         "beyondcode/laravel-dump-server": "^1.4",
         "facade/ignition": "^2.0",
         "fzaninotto/faker": "^1.9.1",
