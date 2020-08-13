@@ -8,21 +8,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Watson\Nameable\Nameable;
 
 /**
  * App\User
  *
  * @property int $id
- * @property string $name
+ * @property array $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read mixed $gravatar
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
@@ -30,33 +31,29 @@ use Watson\Nameable\Nameable;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
  * @property-read int|null $roles_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User permission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User role($roles, $guard = null)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
+ * @method static \Illuminate\Database\Query\Builder|User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|User withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
  * @mixin \Eloquent
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Query\Builder|\App\User onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDeletedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     use HasRoles;
-    use HasApiTokens;
     use SoftDeletes;
     use Unguarded;
 
@@ -72,5 +69,15 @@ class User extends Authenticatable
     public function getGravatarAttribute()
     {
         return 'https://www.gravatar.com/avatar/'.md5(Str::lower($this->email)).'.jpg?s=200&d=mm';
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
