@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserLoginRequest;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @group 1. Authentication
@@ -48,7 +49,9 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            throw ValidationException::withMessages([
+                'email' => [trans('auth.failed')],
+            ]);
         }
 
         return $this->respondWithToken($token);
